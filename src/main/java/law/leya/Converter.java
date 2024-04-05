@@ -48,8 +48,23 @@ public class Converter {
         String xmlPath = xmlFile.getAbsolutePath();
         System.out.println("Processing " + xmlPath + " ...");
 
-        // Transform XML using cleanUp.xsl
-        String cleanUpXslPath = FileUtils.getAbsolutePath("xslt/cleanUp.xsl");
+        String rootNamespace = getRootNamespace(xmlPath);
+        if (rootNamespace.equals("http://docbook.org/ns/docbook")) {
+            // DocBook XML
+            processDocbookXML(xmlFile);
+        } else if (rootNamespace.equals("http://www.timehouse.fi/schemas/HtmlLike")) {
+            // Timehouse XML
+            processTimehouseXML(xmlFile);
+        } else {
+            System.err.println("Unsupported namespace for file: " + xmlPath);
+        }
+    }
+
+    private static void processDocbookXML(File xmlFile) {
+        String xmlPath = xmlFile.getAbsolutePath();
+
+        // Transform XML using Docbook_cleanUp.xsl
+        String cleanUpXslPath = FileUtils.getAbsolutePath("xslt/Docbook_cleanUp.xsl");
         String cleanedXmlPath = xmlPath.replace(".xml", "_clean.xml");
         Xml xml = new Xml(xmlPath);
         xml.transform(cleanUpXslPath, cleanedXmlPath);
@@ -65,6 +80,22 @@ public class Converter {
 
         // Generate PDF from FO
         String pdfPath = cleanedXmlPath.replace("_clean.xml", ".pdf");
+        String fopXconfPath = FileUtils.getAbsolutePath("xslt/fop.xconf.xml");
+        PdfGenerator pdf = new PdfGenerator(foPath, pdfPath, fopXconfPath);
+        pdf.transform();
+    }
+
+    private static void processTimehouseXML(File xmlFile) {
+        String xmlPath = xmlFile.getAbsolutePath();
+
+        // Transform XML using Timehouse_FO.xsl
+        String timehouseXslPath = FileUtils.getAbsolutePath("xslt/Timehouse_FO.xsl");
+        String foPath = xmlPath.replace(".xml", ".fo");
+        Xml xml = new Xml(xmlPath);
+        xml.transform(timehouseXslPath, foPath);
+
+        // Generate PDF from FO
+        String pdfPath = xmlPath.replace(".xml", ".pdf");
         String fopXconfPath = FileUtils.getAbsolutePath("xslt/fop.xconf.xml");
         PdfGenerator pdf = new PdfGenerator(foPath, pdfPath, fopXconfPath);
         pdf.transform();
@@ -91,5 +122,31 @@ public class Converter {
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    private static String getRootNamespace(String xmlPath) {
+        try {
+            File xmlFile = new File(xmlPath);
+            BufferedReader reader = new BufferedReader(new FileReader(xmlFile));
+            String line;
+            while ((line = reader.readLine()) != null) {
+                if (line.contains("<")) {
+                    int nsStartIndex = line.indexOf("xmlns=\"");
+                    if (nsStartIndex != -1) {
+                        nsStartIndex += "xmlns=\"".length();
+                        int nsEndIndex = line.indexOf("\"", nsStartIndex);
+                        if (nsEndIndex != -1) {
+                            String namespace = line.substring(nsStartIndex, nsEndIndex);
+                            reader.close();
+                            return namespace;
+                        }
+                    }
+                }
+            }
+            reader.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return "";
     }
 }

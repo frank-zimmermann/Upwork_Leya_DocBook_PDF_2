@@ -11,8 +11,16 @@
         </xsl:copy>
     </xsl:template>
 
-    <xsl:template match="processing-instruction('carriagereturn')[parent::phrase[ancestor::footnote]]"
-        xpath-default-namespace="http://docbook.org/ns/docbook">&#160;</xsl:template>    
+    <xsl:template match="/*" xpath-default-namespace="http://docbook.org/ns/docbook">
+        <xsl:copy>
+            <xsl:attribute name="xml:base"/>
+            <xsl:apply-templates select="node() | @*"/>
+        </xsl:copy>
+    </xsl:template>
+
+    <xsl:template
+        match="processing-instruction('carriagereturn')[parent::phrase[ancestor::footnote]]"
+        xpath-default-namespace="http://docbook.org/ns/docbook">&#160;</xsl:template>
 
     <xsl:template match="phrase[parent::footnote]"
         xpath-default-namespace="http://docbook.org/ns/docbook">
