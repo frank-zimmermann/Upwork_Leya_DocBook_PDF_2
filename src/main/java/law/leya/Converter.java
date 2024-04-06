@@ -8,6 +8,11 @@ import java.util.regex.Pattern;
 
 public class Converter {
     public static void main(String[] args) {
+
+        System.out.println("-------------------");
+        System.out.println("Leya PDF Generator");
+        System.out.println("-------------------");
+
         ArgumentParser parser = new ArgumentParser(args);
         String xmlFolder = parser.getXmlFolder();
 
@@ -31,13 +36,23 @@ public class Converter {
     }
 
     private static void processFolder(File folder) {
-        for (File file : Objects.requireNonNull(folder.listFiles())) {
+        File[] files = Objects.requireNonNull(folder.listFiles());
+        boolean hasXmlFiles = false;
+
+        for (File file : files) {
             if (file.isDirectory()) {
                 // Recursively process subfolders
                 processFolder(file);
-            } else if (file.getName().toLowerCase().endsWith(".xml")) {
-                // Process XML files excluding those ending with "_clean.xml"
-                if (!file.getName().toLowerCase().endsWith("_clean.xml")) {
+            } else if (file.getName().toLowerCase().endsWith(".xml") && !file.getName().toLowerCase().endsWith("_clean.xml")) {
+                hasXmlFiles = true;
+            }
+        }
+
+        if (hasXmlFiles) {
+            System.out.println("Processing folder " + folder.getAbsolutePath() + " ...");
+
+            for (File file : files) {
+                if (file.getName().toLowerCase().endsWith(".xml") && !file.getName().toLowerCase().endsWith("_clean.xml")) {
                     processXmlFile(file);
                 }
             }
@@ -46,7 +61,7 @@ public class Converter {
 
     private static void processXmlFile(File xmlFile) {
         String xmlPath = xmlFile.getAbsolutePath();
-        System.out.println("Processing " + xmlPath + " ...");
+        System.out.println("> Processing file " + xmlFile.getName() + " ...");
 
         String rootNamespace = getRootNamespace(xmlPath);
         if (rootNamespace.equals("http://docbook.org/ns/docbook")) {
@@ -56,7 +71,7 @@ public class Converter {
             // Timehouse XML
             processTimehouseXML(xmlFile);
         } else {
-            System.err.println("Unsupported namespace for file: " + xmlPath);
+            System.err.println("Error: Unsupported namespace '" + rootNamespace + "' for file: " + xmlPath + ". Skipping transformation.");
         }
     }
 
@@ -70,7 +85,7 @@ public class Converter {
         xml.transform(cleanUpXslPath, cleanedXmlPath);
 
         // Search and replace in the cleaned XML file
-        searchAndReplaceInXml(cleanedXmlPath);
+        //searchAndReplaceInXml(cleanedXmlPath);
 
         // Transform cleaned XML to FO
         String foXslPath = FileUtils.getAbsolutePath("xslt/docbook-xsl/fo/docbook_custom.xsl");

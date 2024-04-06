@@ -186,7 +186,7 @@
 <xsl:template match="*" mode="process.root">
   <xsl:variable name="document.element" select="self::*"/>
 
-  <xsl:call-template name="root.messages"/>
+  <!--<xsl:call-template name="root.messages"/>-->
 
   <xsl:variable name="title">
     <xsl:choose>

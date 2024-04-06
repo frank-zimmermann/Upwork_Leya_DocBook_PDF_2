@@ -58,7 +58,7 @@
                         <xsl:value-of select="head/title"/>
                     </fo:block>
 
-                    <fo:block font-size="15pt" font-weight="bold">
+                    <fo:block font-size="20pt" font-weight="bold" line-height="1.5em">
                         <xsl:value-of
                             select="//article/div[@data-type = 'nimitieto']/span[@data-type = 'nimi']/text()"
                         />
@@ -145,6 +145,7 @@
             <xsl:value-of select="span[@data-type = 'nimi']"/>
         </fo:block>
         <xsl:apply-templates select="section"/>
+        <xsl:apply-templates select="./div[@data-type = 'viite']"/>
     </xsl:template>
 
     <xsl:template match="section[@data-type = 'pykala']" mode="toc"
@@ -179,13 +180,25 @@
             <xsl:apply-templates/>
         </fo:block>
     </xsl:template>
+    
+    <xsl:template match="div[@data-type = 'viite']" xpath-default-namespace="http://www.timehouse.fi/schemas/HtmlLike">
+        <fo:block text-align="center">
+            <xsl:apply-templates/>
+        </fo:block>
+    </xsl:template>
 
     <xsl:template match="i" xpath-default-namespace="http://www.timehouse.fi/schemas/HtmlLike">
         <fo:inline font-style="italic">
             <xsl:apply-templates/>
         </fo:inline>
     </xsl:template>
-
-
+    
+    <xsl:template match="b" xpath-default-namespace="http://www.timehouse.fi/schemas/HtmlLike">
+        <fo:inline font-weight="bold">
+            <xsl:apply-templates/>
+        </fo:inline>
+    </xsl:template>
+    
+    
 
 </xsl:stylesheet>
