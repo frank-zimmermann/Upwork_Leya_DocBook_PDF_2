@@ -61,7 +61,7 @@ public class Converter {
 
     private static void processXmlFile(File xmlFile) {
         String xmlPath = xmlFile.getAbsolutePath();
-        System.out.println("Processing " + xmlPath + " ...");
+        System.out.println("> Processing file " + xmlFile.getName() + " ...");
 
         String rootNamespace = getRootNamespace(xmlPath);
         if (rootNamespace.equals("http://docbook.org/ns/docbook")) {
@@ -71,25 +71,21 @@ public class Converter {
             // Timehouse XML
             processTimehouseXML(xmlFile);
         } else {
-            System.err.println("Unsupported namespace '" + rootNamespace + "' for file: " + xmlPath + ". Skipping transformation.");
+            System.err.println("Error: Unsupported namespace '" + rootNamespace + "' for file: " + xmlPath + ". Skipping transformation.");
         }
     }
 
     private static void processDocbookXML(File xmlFile) {
         String xmlPath = xmlFile.getAbsolutePath();
 
-        // Create the "pdf" subfolder if it doesn't exist
-        String pdfFolder = xmlFile.getParent() + "/pdf";
-        new File(pdfFolder).mkdirs();
-
         // Transform XML using Docbook_cleanUp.xsl
         String cleanUpXslPath = FileUtils.getAbsolutePath("xslt/Docbook_cleanUp.xsl");
-        String cleanedXmlPath = pdfFolder + "/" + xmlFile.getName().replace(".xml", "_clean.xml");
+        String cleanedXmlPath = xmlPath.replace(".xml", "_clean.xml");
         Xml xml = new Xml(xmlPath);
         xml.transform(cleanUpXslPath, cleanedXmlPath);
 
         // Search and replace in the cleaned XML file
-        searchAndReplaceInXml(cleanedXmlPath);
+        //searchAndReplaceInXml(cleanedXmlPath);
 
         // Transform cleaned XML to FO
         String foXslPath = FileUtils.getAbsolutePath("xslt/docbook-xsl/fo/docbook_custom.xsl");
@@ -98,44 +94,26 @@ public class Converter {
         xml.transform(foXslPath, foPath);
 
         // Generate PDF from FO
-        String pdfPath = foPath.replace(".fo", ".pdf");
+        String pdfPath = cleanedXmlPath.replace("_clean.xml", ".pdf");
         String fopXconfPath = FileUtils.getAbsolutePath("xslt/fop.xconf.xml");
         PdfGenerator pdf = new PdfGenerator(foPath, pdfPath, fopXconfPath);
         pdf.transform();
-
-        // Delete the _clean.xml and .fo files
-        new File(cleanedXmlPath).delete();
-        new File(foPath).delete();
     }
 
     private static void processTimehouseXML(File xmlFile) {
         String xmlPath = xmlFile.getAbsolutePath();
 
-        // Create the "pdf" subfolder if it doesn't exist
-        String pdfFolder = xmlFile.getParent() + "/pdf";
-        new File(pdfFolder).mkdirs();
-
-        // Transform XML using Timehouse_cleanup.xsl
-        String cleanUpXslPath = FileUtils.getAbsolutePath("xslt/Timehouse_cleanup.xsl");
-        String cleanedXmlPath = pdfFolder + "/" + xmlFile.getName().replace(".xml", "_clean.xml");
-        Xml xml = new Xml(xmlPath);
-        xml.transform(cleanUpXslPath, cleanedXmlPath);
-
-        // Transform cleaned XML to FO
+        // Transform XML using Timehouse_FO.xsl
         String timehouseXslPath = FileUtils.getAbsolutePath("xslt/Timehouse_FO.xsl");
-        String foPath = cleanedXmlPath.replace("_clean.xml", ".fo");
-        xml = new Xml(cleanedXmlPath);
+        String foPath = xmlPath.replace(".xml", ".fo");
+        Xml xml = new Xml(xmlPath);
         xml.transform(timehouseXslPath, foPath);
 
         // Generate PDF from FO
-        String pdfPath = foPath.replace(".fo", ".pdf");
+        String pdfPath = xmlPath.replace(".xml", ".pdf");
         String fopXconfPath = FileUtils.getAbsolutePath("xslt/fop.xconf.xml");
         PdfGenerator pdf = new PdfGenerator(foPath, pdfPath, fopXconfPath);
         pdf.transform();
-
-        // Delete the _clean.xml and .fo files
-        new File(cleanedXmlPath).delete();
-        new File(foPath).delete();
     }
 
     private static void searchAndReplaceInXml(String xmlPath) {
