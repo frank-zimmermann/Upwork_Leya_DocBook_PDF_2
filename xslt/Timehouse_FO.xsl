@@ -6,7 +6,7 @@
 
 
 
-    <xsl:template match="/html" xpath-default-namespace="http://www.timehouse.fi/schemas/HtmlLike">
+    <xsl:template match="/html">
         <fo:root xmlns:fo="http://www.w3.org/1999/XSL/Format">
             <fo:layout-master-set>
 
@@ -32,90 +32,16 @@
 
                 <fo:flow flow-name="xsl-region-body" font-size="10pt" line-height="1.5em">
 
-                    <fo:table space-after="1cm">
-                        <fo:table-column column-width="60%"/>
-                        <fo:table-body>
-                            <fo:table-row border-left="1pt solid grey" border-top="1pt solid grey"
-                                border-bottom="1pt solid grey">
-                                <fo:table-cell font-weight="bold" padding="2mm">
-                                    <fo:block>
-                                        <xsl:value-of
-                                            select="//article/div[@data-type = 'nimitieto']/span[@data-type = 'nimi']/text()"
-                                        />
-                                    </fo:block>
-                                </fo:table-cell>
-                            </fo:table-row>
-                            <xsl:apply-templates select=".//section[@data-type = 'pykala']"
-                                mode="toc"/>
-                        </fo:table-body>
-                    </fo:table>
+
+                    <xsl:apply-templates select="head/title"/>
+                    <xsl:apply-templates select="article[@data-subtype = 'KkoJudgment']/header/h2"/>
 
 
 
-                    <fo:block font-weight="bold" space-after="2cm">LAINSÄÄDÄNTÖ</fo:block>
+                    <xsl:apply-templates select="body/article/table"/>
 
-                    <fo:block font-size="35pt" font-weight="bold" space-after="5mm">
-                        <xsl:value-of select="head/title"/>
-                    </fo:block>
+                    <xsl:apply-templates select="body/article/*[not(self::table)]"/>
 
-                    <fo:block font-size="20pt" font-weight="bold" line-height="1.5em">
-                        <xsl:value-of
-                            select="//article/div[@data-type = 'nimitieto']/span[@data-type = 'nimi']/text()"
-                        />
-                    </fo:block>
-
-                    <fo:table border-bottom="1pt solid grey" space-after="1cm" space-before="5mm">
-                        <fo:table-column column-width="40%"/>
-                        <fo:table-column column-width="60%"/>
-                        <fo:table-body>
-                            <fo:table-row>
-                                <fo:table-cell font-weight="bold" padding="2mm">
-                                    <fo:block>Säädöskokoelmanumero:</fo:block>
-                                </fo:table-cell>
-                                <fo:table-cell padding="2mm">
-                                    <fo:block>
-                                        <xsl:apply-templates
-                                            select=".//div[@data-type = 'saadosnro']"/>
-                                    </fo:block>
-                                </fo:table-cell>
-                            </fo:table-row>
-                            <fo:table-row>
-                                <fo:table-cell font-weight="bold" padding="2mm">
-                                    <fo:block>Voimaantulopäivä:</fo:block>
-                                </fo:table-cell>
-                                <fo:table-cell padding="2mm">
-                                    <fo:block>
-                                        <xsl:value-of
-                                            select=".//div[@data-type = 'voimaantulo']/time"/>
-                                    </fo:block>
-                                </fo:table-cell>
-                            </fo:table-row>
-                            <fo:table-row>
-                                <fo:table-cell font-weight="bold" padding="2mm">
-                                    <fo:block>Antopäivä:</fo:block>
-                                </fo:table-cell>
-                                <fo:table-cell padding="2mm">
-                                    <fo:block>
-                                        <xsl:value-of select=".//div[@data-type = 'antotieto']/time"
-                                        />
-                                    </fo:block>
-                                </fo:table-cell>
-                            </fo:table-row>
-                            <fo:table-row>
-                                <fo:table-cell font-weight="bold" padding="2mm">
-                                    <fo:block>Muutokset:</fo:block>
-                                </fo:table-cell>
-                                <fo:table-cell padding="2mm">
-                                    <fo:block>
-                                        <xsl:apply-templates
-                                            select=".//section[@data-type = 'historia']"/>
-                                    </fo:block>
-                                </fo:table-cell>
-                            </fo:table-row>
-                        </fo:table-body>
-                    </fo:table>
-
-                    <xsl:apply-templates select=".//section[@data-type = 'pykala']"/>
 
 
                 </fo:flow>
@@ -123,82 +49,93 @@
         </fo:root>
     </xsl:template>
 
-    <xsl:template match="div[@data-type = 'saadosnro']"
-        xpath-default-namespace="http://www.timehouse.fi/schemas/HtmlLike">
-        <xsl:value-of select="span[@data-type = 'snro']"/>
-        <xsl:text>/</xsl:text>
-        <xsl:value-of select="span[@data-type = 'vuosiluku']"/>
-    </xsl:template>
-
-    <xsl:template match="a" xpath-default-namespace="http://www.timehouse.fi/schemas/HtmlLike">
-        <fo:basic-link external-destination="{@href}">
+    <xsl:template match="head/title">
+        <fo:block font-size="15pt" font-weight="bold" space-after="5mm">
             <xsl:apply-templates/>
-        </fo:basic-link>
-    </xsl:template>
-
-    <xsl:template match="section[@data-type = 'pykala']"
-        xpath-default-namespace="http://www.timehouse.fi/schemas/HtmlLike">
-        <fo:block font-weight="bold" font-size="16pt" space-before="1cm" space-after="5mm"
-            keep-with-next="always" id="{generate-id(.)}">
-            <xsl:value-of select="span[@data-type = 'numero']"/>
-            <xsl:text> §. </xsl:text>
-            <xsl:value-of select="span[@data-type = 'nimi']"/>
         </fo:block>
-        <xsl:apply-templates select="section"/>
-        <xsl:apply-templates select="./div[@data-type = 'viite']"/>
+
     </xsl:template>
 
-    <xsl:template match="section[@data-type = 'pykala']" mode="toc"
-        xpath-default-namespace="http://www.timehouse.fi/schemas/HtmlLike">
+    <xsl:template match="table">
+        <fo:table border-bottom="1pt solid grey" space-after="1cm" space-before="5mm">
+            <fo:table-column column-width="40%"/>
+            <fo:table-column column-width="60%"/>
+            <fo:table-body>
+                <xsl:apply-templates/>
+            </fo:table-body>
+        </fo:table>
+    </xsl:template>
 
-        <fo:table-row border-left="1pt solid grey">
-            <fo:table-cell padding="2mm">
+    <xsl:template match="tr">
+        <fo:table-row>
+            <xsl:apply-templates/>
+        </fo:table-row>
+    </xsl:template>
+
+    <xsl:template match="th | td">
+        <fo:table-cell font-weight="bold" padding="2mm">
+            <fo:block>
+                <xsl:apply-templates/>
+            </fo:block>
+        </fo:table-cell>
+    </xsl:template>
+
+
+    <xsl:template match="a">
+        <xsl:choose>
+            <xsl:when test="not(parent::p)">
                 <fo:block>
-                    <fo:basic-link internal-destination="{generate-id(.)}">
-                        <xsl:value-of select="span[@data-type = 'numero']"/>
-                        <xsl:text> §. </xsl:text>
-                        <xsl:value-of select="span[@data-type = 'nimi']"/>
+                    <fo:basic-link external-destination="{@href}">
+                        <xsl:apply-templates/>
                     </fo:basic-link>
                 </fo:block>
-            </fo:table-cell>
-        </fo:table-row>
-
+            </xsl:when>
+            <xsl:otherwise>
+                <fo:basic-link external-destination="{@href}">
+                    <xsl:apply-templates/>
+                </fo:basic-link>
+            </xsl:otherwise>
+        </xsl:choose>
     </xsl:template>
 
-    <xsl:template match="section[@data-type = 'kohta']"
-        xpath-default-namespace="http://www.timehouse.fi/schemas/HtmlLike">
-        <fo:block margin-left="1cm" space-after="5mm" space-before="5mm">
+
+
+    <xsl:template match="h2">
+        <fo:block space-after="5mm" font-size="13pt" font-weight="bold">
             <xsl:apply-templates/>
         </fo:block>
-
     </xsl:template>
 
+    <xsl:template match="h3">
+        <fo:block space-after="5mm" font-size="11pt" font-weight="bold">
+            <xsl:apply-templates/>
+        </fo:block>
+    </xsl:template>
 
-    <xsl:template match="section[@data-type = 'momentti']"
-        xpath-default-namespace="http://www.timehouse.fi/schemas/HtmlLike">
+    <xsl:template match="p">
         <fo:block space-after="5mm">
             <xsl:apply-templates/>
         </fo:block>
     </xsl:template>
-    
-    <xsl:template match="div[@data-type = 'viite']" xpath-default-namespace="http://www.timehouse.fi/schemas/HtmlLike">
-        <fo:block text-align="center">
-            <xsl:apply-templates/>
-        </fo:block>
+
+
+    <xsl:template match="br">
+        <fo:block/>
     </xsl:template>
 
-    <xsl:template match="i" xpath-default-namespace="http://www.timehouse.fi/schemas/HtmlLike">
+
+    <xsl:template match="i">
         <fo:inline font-style="italic">
             <xsl:apply-templates/>
         </fo:inline>
     </xsl:template>
-    
-    <xsl:template match="b" xpath-default-namespace="http://www.timehouse.fi/schemas/HtmlLike">
+
+    <xsl:template match="b">
         <fo:inline font-weight="bold">
             <xsl:apply-templates/>
         </fo:inline>
     </xsl:template>
-    
-    
+
+
 
 </xsl:stylesheet>

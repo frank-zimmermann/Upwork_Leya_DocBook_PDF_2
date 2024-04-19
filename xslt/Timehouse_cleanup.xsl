@@ -28,6 +28,20 @@
     <xsl:template match="div[@hidden = 'hidden']"
         xpath-default-namespace="http://www.timehouse.fi/schemas/HtmlLike"/>
 
+    <xsl:template match="section[@data-type = 'momentti']"
+        xpath-default-namespace="http://www.timehouse.fi/schemas/HtmlLike">
+        <p>
+            <xsl:apply-templates/>
+        </p>
+    </xsl:template>
+    
+    <xsl:template match="section[@data-type = 'kohta']"
+        xpath-default-namespace="http://www.timehouse.fi/schemas/HtmlLike">
+        <li>
+            <xsl:apply-templates/>
+        </li>
+    </xsl:template>
+    
     <xsl:template match="article[@data-subtype = 'KkoJudgment']/header"
         xpath-default-namespace="http://www.timehouse.fi/schemas/HtmlLike"/>
 
@@ -40,8 +54,9 @@
     <xsl:template match="p[p]" xpath-default-namespace="http://www.timehouse.fi/schemas/HtmlLike">
         <xsl:apply-templates/>
     </xsl:template>
-    
-    <xsl:template match="section[ancestor::article[@data-subtype = 'HoJudgment']]" xpath-default-namespace="http://www.timehouse.fi/schemas/HtmlLike">
+
+    <xsl:template match="section[ancestor::article[@data-subtype = 'HoJudgment']]"
+        xpath-default-namespace="http://www.timehouse.fi/schemas/HtmlLike">
         <xsl:apply-templates/>
     </xsl:template>
 

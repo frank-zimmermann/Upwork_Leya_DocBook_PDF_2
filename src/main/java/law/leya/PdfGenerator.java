@@ -52,7 +52,7 @@ public class PdfGenerator {
             }
 
         } catch (SAXException | IOException | TransformerException e) {
-            LOGGER.fatal(e.getLocalizedMessage());
+            //LOGGER.fatal(e.getLocalizedMessage());
         }
     }
 
