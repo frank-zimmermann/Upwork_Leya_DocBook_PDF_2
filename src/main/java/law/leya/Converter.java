@@ -172,6 +172,9 @@ public class Converter {
         if (new File(parentFolderPath).getName().equals("Regulation")) {
             return FileUtils.getAbsolutePath("xslt/Timehouse_Regulation.xsl");
         }
+        else if (new File(parentFolderPath).getName().equals("EU")) {
+            return FileUtils.getAbsolutePath("xslt/Timehouse_EU.xsl");
+        }
 
         // Default XSLT file if no match found
         return FileUtils.getAbsolutePath("xslt/Timehouse_FO.xsl");
