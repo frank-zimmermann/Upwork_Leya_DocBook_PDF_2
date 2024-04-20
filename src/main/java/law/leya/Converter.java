@@ -193,6 +193,9 @@ public class Converter {
         else if (new File(parentFolderPath).getName().equals("MUUT")) {
             return FileUtils.getAbsolutePath("xslt/Timehouse_MUUT.xsl");
         }
+        else if (new File(parentFolderPath).getName().equals("TT")) {
+            return FileUtils.getAbsolutePath("xslt/Timehouse_TT.xsl");
+        }
 
         // Default XSLT file if no match found
         return FileUtils.getAbsolutePath("xslt/Timehouse_FO.xsl");
