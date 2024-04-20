@@ -175,6 +175,9 @@ public class Converter {
         else if (new File(parentFolderPath).getName().equals("EU")) {
             return FileUtils.getAbsolutePath("xslt/Timehouse_EU.xsl");
         }
+        else if (new File(parentFolderPath).getName().equals("HO")) {
+            return FileUtils.getAbsolutePath("xslt/Timehouse_HO.xsl");
+        }
 
         // Default XSLT file if no match found
         return FileUtils.getAbsolutePath("xslt/Timehouse_FO.xsl");
