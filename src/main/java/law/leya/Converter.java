@@ -184,6 +184,15 @@ public class Converter {
         else if (new File(parentFolderPath).getName().equals("KKO")) {
             return FileUtils.getAbsolutePath("xslt/Timehouse_KKO.xsl");
         }
+        else if (new File(parentFolderPath).getName().equals("KKOJudgment")) {
+            return FileUtils.getAbsolutePath("xslt/Timehouse_KKOJudgment.xsl");
+        }
+        else if (new File(parentFolderPath).getName().equals("KKOVL")) {
+            return FileUtils.getAbsolutePath("xslt/Timehouse_KKOVL.xsl");
+        }
+        else if (new File(parentFolderPath).getName().equals("MUUT")) {
+            return FileUtils.getAbsolutePath("xslt/Timehouse_MUUT.xsl");
+        }
 
         // Default XSLT file if no match found
         return FileUtils.getAbsolutePath("xslt/Timehouse_FO.xsl");
