@@ -30,26 +30,10 @@
 
                 <fo:flow flow-name="xsl-region-body" font-size="10pt" line-height="1.5em">
 
-                    <fo:table space-after="1cm">
-                        <fo:table-column column-width="60%"/>
-                        <fo:table-body>
-                            <fo:table-row border-left="1pt solid grey" border-top="1pt solid grey"
-                                border-bottom="1pt solid grey">
-                                <fo:table-cell font-weight="bold" padding="2mm">
-                                    <fo:block>
-                                        <xsl:value-of
-                                            select="//article/div[@data-type = 'nimitieto']/span[@data-type = 'nimi']/text()"
-                                        />
-                                    </fo:block>
-                                </fo:table-cell>
-                            </fo:table-row>
-                            <xsl:apply-templates select=".//section[@data-type = 'artikla']"
-                                mode="toc"/>
-                        </fo:table-body>
-                    </fo:table>
 
 
-                    <fo:block font-size="35pt" font-weight="bold" space-after="5mm">
+                    <fo:block font-size="35pt" font-weight="bold" space-after="5mm"
+                        line-height="1em">
                         <xsl:value-of select="head/title"/>
                     </fo:block>
 
@@ -58,52 +42,89 @@
                     <xsl:apply-templates/>
 
 
-
-                    <!--<xsl:apply-templates select=".//section[@data-type = 'pykala']"/>-->
-
-
                 </fo:flow>
             </fo:page-sequence>
         </fo:root>
     </xsl:template>
 
 
-    <xsl:template match="section[@data-type = 'artikla']" mode="toc">
+    <xsl:template match="dl[@datatype = 'meta']">
+        <fo:table border-bottom="1pt solid grey" space-after="1cm" space-before="5mm"
+            start-indent="0cm">
+            <fo:table-column column-width="40%"/>
+            <fo:table-column column-width="60%"/>
+            <fo:table-body>
+                <xsl:apply-templates/>
+            </fo:table-body>
+        </fo:table>
+    </xsl:template>
 
-        <fo:table-row border-left="1pt solid grey">
+    <xsl:template match="dl[@datatype = 'meta']/dt">
+        <fo:table-row>
+            <fo:table-cell font-weight="bold" padding="2mm">
+                <fo:block>
+                    <xsl:apply-templates/>
+                </fo:block>
+            </fo:table-cell>
             <fo:table-cell padding="2mm">
                 <fo:block>
-                    <fo:basic-link internal-destination="{generate-id(.)}">
-                        <xsl:value-of select="span[@data-type = 'numero']"/>
-                        <xsl:text> §. </xsl:text>
-                        <xsl:value-of select="span[@data-type = 'nimi']"/>
-                    </fo:basic-link>
+                    <xsl:apply-templates select="following-sibling::dd[1]"/>
                 </fo:block>
             </fo:table-cell>
         </fo:table-row>
 
     </xsl:template>
 
-    <xsl:template match="section[@data-type = 'artikla']">
-        <fo:block font-weight="bold" font-size="16pt" space-before="1cm" space-after="5mm"
-            keep-with-next="always" id="{generate-id(.)}">
-            <xsl:value-of select="span[@data-type = 'numero']"/>
-            <xsl:text> §. </xsl:text>
-            <xsl:value-of select="span[@data-type = 'nimi']"/>
-        </fo:block>
-        <xsl:apply-templates select="section"/>
-    </xsl:template>
 
-    <xsl:template match="article/div[@data-type = 'nimitieto']/span">
-        <fo:block font-size="14pt" font-weight="bold" line-height="1.5em">
-            <xsl:apply-templates/>
-        </fo:block>
-    </xsl:template>
 
     <xsl:template match="div | section | p | article/span">
         <fo:block space-after="5mm">
             <xsl:apply-templates/>
         </fo:block>
+    </xsl:template>
+
+    <xsl:template match="h2">
+        <fo:block space-after="5mm" font-weight="bold" font-size="16pt">
+            <xsl:apply-templates/>
+        </fo:block>
+    </xsl:template>
+
+    <xsl:template match="h3">
+        <fo:block space-after="5mm" font-weight="bold" font-size="14pt">
+            <xsl:apply-templates/>
+        </fo:block>
+    </xsl:template>
+
+    <xsl:template match="h4">
+        <fo:block space-after="5mm" font-weight="bold" font-size="12pt">
+            <xsl:apply-templates/>
+        </fo:block>
+    </xsl:template>
+
+    <xsl:template match="ul">
+        <fo:list-block>
+            <xsl:apply-templates/>
+        </fo:list-block>
+    </xsl:template>
+
+    <xsl:template match="li">
+        <fo:list-item>
+            <fo:list-item-label end-indent="label-end()">
+                <fo:block>
+                    <fo:inline>&#x2022;</fo:inline>
+                </fo:block>
+            </fo:list-item-label>
+            <fo:list-item-body start-indent="body-start()">
+                <fo:block>
+                    <xsl:apply-templates/>
+                </fo:block>
+            </fo:list-item-body>
+        </fo:list-item>
+
+    </xsl:template>
+
+    <xsl:template match="br">
+        <fo:block/>
     </xsl:template>
 
     <xsl:template match="table">
@@ -127,13 +148,13 @@
 
     <xsl:template match="td | th">
         <fo:table-cell padding="2mm">
-            
+
             <xsl:if test="@colspan">
                 <xsl:attribute name="number-columns-spanned">
                     <xsl:value-of select="@colspan"/>
                 </xsl:attribute>
             </xsl:if>
-            
+
             <!-- border handling -->
             <xsl:if test="contains(@style, 'border-left')">
                 <xsl:attribute name="border-left">1px solid #000000</xsl:attribute>
@@ -147,8 +168,8 @@
             <xsl:if test="contains(@style, 'border-bottom') or parent::*/@data-rowsep > 0">
                 <xsl:attribute name="border-bottom">1px solid #000000</xsl:attribute>
             </xsl:if>
-            
-            
+
+
             <fo:block>
                 <xsl:if test="self::th">
                     <xsl:attribute name="font-weight">bold</xsl:attribute>
@@ -164,7 +185,7 @@
         </fo:inline>
     </xsl:template>
 
-    <xsl:template match="b">
+    <xsl:template match="b | strong">
         <fo:inline font-weight="bold">
             <xsl:apply-templates/>
         </fo:inline>

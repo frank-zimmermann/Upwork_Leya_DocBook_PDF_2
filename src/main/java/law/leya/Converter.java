@@ -178,6 +178,12 @@ public class Converter {
         else if (new File(parentFolderPath).getName().equals("HO")) {
             return FileUtils.getAbsolutePath("xslt/Timehouse_HO.xsl");
         }
+        else if (new File(parentFolderPath).getName().equals("HOJudgment")) {
+            return FileUtils.getAbsolutePath("xslt/Timehouse_HOJudgment.xsl");
+        }
+        else if (new File(parentFolderPath).getName().equals("KKO")) {
+            return FileUtils.getAbsolutePath("xslt/Timehouse_KKO.xsl");
+        }
 
         // Default XSLT file if no match found
         return FileUtils.getAbsolutePath("xslt/Timehouse_FO.xsl");

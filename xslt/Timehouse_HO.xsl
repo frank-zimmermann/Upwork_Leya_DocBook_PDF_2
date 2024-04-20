@@ -117,7 +117,7 @@
         </fo:table-row>
     </xsl:template>
 
-    <xsl:template match="td">
+    <xsl:template match="td | th">
         <fo:table-cell padding="2mm">
             
             <xsl:if test="@colspan">
@@ -142,6 +142,9 @@
             
             
             <fo:block>
+                <xsl:if test="self::th">
+                    <xsl:attribute name="font-weight">bold</xsl:attribute>
+                </xsl:if>
                 <xsl:apply-templates/>
             </fo:block>
         </fo:table-cell>
