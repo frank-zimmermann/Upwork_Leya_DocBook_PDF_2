@@ -100,7 +100,7 @@
         </fo:block>
     </xsl:template>
 
-    <xsl:template match="div | section | p | article/span">
+    <xsl:template match="div | section | p | article/span | article/a">
         <fo:block space-after="5mm">
             <xsl:apply-templates/>
         </fo:block>

@@ -74,7 +74,7 @@
         </fo:root>
     </xsl:template>
 
-    <xsl:template match="div | section | article/span">
+    <xsl:template match="div | section | article/span | article/a">
         <fo:block>
             <xsl:apply-templates/>
         </fo:block>

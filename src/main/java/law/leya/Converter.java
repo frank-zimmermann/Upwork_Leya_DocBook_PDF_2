@@ -160,8 +160,8 @@ public class Converter {
         pdf.transform();
 
         // Delete the copied XML file and the .fo file
-        //new File(copiedXmlPath).delete();
-        //new File(foPath).delete();
+        new File(copiedXmlPath).delete();
+        new File(foPath).delete();
     }
 
     private static String determineTransformationXslt(String cleanedXmlPath) {
